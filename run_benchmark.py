@@ -1,45 +1,73 @@
 # run_benchmark.py
-# Simple runner to test ToolReliBench
-# Loads tasks, runs wrapper, prints results
-# Built by Sarvesh for AI agent research
+# Runs the benchmark, uses metrics, prints nice results
+# Built by Sarvesh for ToolReliBench
 
 import json
+import csv
 from agents.reliability_wrapper import reliability_wrapper
+from evaluators.metrics import calculate_metrics
 
-# Dummy agent for testing (replace with real LLM agent later)
+# Dummy agent for testing (works without API keys)
 def dummy_agent(messages):
-    # Simulate a response (add your real code here)
-    last_message = messages[-1]["content"]
-    if "capital" in last_message.lower():
-        return {"content": "Paris"}  # Correct
-    elif "calculate" in last_message.lower():
-        return {"content": "345"}    # Correct
-    elif "fake" in last_message.lower():
-        return {"content": "I called a fake_tool!"}  # Hallucination
+    last_message = messages[-1]["content"].lower()
+    if "capital" in last_message:
+        return type('obj', (object,), {'content': 'Paris'})()  # Correct
+    elif "calculate" in last_message or "15 * 23" in last_message:
+        return type('obj', (object,), {'content': '345'})()
+    elif "fake" in last_message:
+        return type('obj', (object,), {'content': 'I called a fake_tool!'})()  # Hallucination
     else:
-        return {"content": "Unknown"}
+        return type('obj', (object,), {'content': 'Unknown answer'})()
 
-# Wrap the dummy agent
-wrapped_agent = reliability_wrapper(dummy_agent)
+# Wrap the agent with reliability
+wrapped_agent = reliability_wrapper(dummy_agent, max_tokens=8000, max_retries=2)
 
-# Load tasks from JSON
+# Load tasks
 with open('tasks/sample_tasks.json', 'r') as f:
     tasks = json.load(f)
 
-# Run benchmark on first 3 tasks (test)
-results = []
-for task in tasks[:3]:
-    result = wrapped_agent(task)
-    results.append(result)
-    print(f"Task {task['id']}: {result}")
+print("🚀 Starting ToolReliBench...\n")
 
-# Save results to CSV (simple)
-import csv
+results = []
+all_metrics = []
+
+for task in tasks:
+    print(f"Running Task {task['id']}: {task['user_prompt'][:60]}...")
+    
+    result = wrapped_agent(task)
+    
+    # Calculate the 6 metrics
+    metrics = calculate_metrics(result, task)
+    
+    # Print results nicely
+    print(f"   Success: {result.get('success')}")
+    print(f"   Failure: {result.get('failure_type')}")
+    print(f"   Tokens: {result.get('tokens')}")
+    print(f"   Metrics: {metrics}")
+    print("-" * 50)
+    
+    results.append(result)
+    all_metrics.append(metrics)
+
+# Save full results to CSV
 with open('results.csv', 'w', newline='') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=['task_id', 'success', 'final_answer', 'failure_type', 'tokens'])
+    fieldnames = ['task_id', 'success', 'failure_type', 'tokens', 
+                  'correct_tool_selection', 'tool_parameter_accuracy',
+                  'execution_success', 'hallucinated_tool_detection',
+                  'recovery_from_failure', 'token_cost_efficiency']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
-    for i, res in enumerate(results):
-        row = {'task_id': tasks[i]['id'], **res}
+    
+    for i, (res, met) in enumerate(zip(results, all_metrics)):
+        row = {
+            'task_id': tasks[i]['id'],
+            'success': res.get('success'),
+            'failure_type': res.get('failure_type'),
+            'tokens': res.get('tokens'),
+            **met
+        }
         writer.writerow(row)
 
-print("Benchmark run complete! Check results.csv")
+print("✅ Benchmark complete!")
+print("📊 Check results.csv for full scores")
+print("Your project now measures real agent reliability!")
