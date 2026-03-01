@@ -1,0 +1,58 @@
+[
+  {
+    "id": "t001",
+    "user_prompt": "What is the capital of France? Reply with only the city name.",
+    "tools": ["search_web"],
+    "expected_tools": ["search_web"],
+    "ground_truth": "Paris"
+  },
+  {
+    "id": "t002",
+    "user_prompt": "Calculate 15 * 23 and tell me the answer.",
+    "tools": ["calculator"],
+    "expected_tools": ["calculator"],
+    "ground_truth": "345"
+  },
+  {
+    "id": "t003",
+    "user_prompt": "What is today's date? Use any tool you have.",
+    "tools": ["search_web"],
+    "expected_tools": ["search_web"],
+    "ground_truth": "Use current date"
+  },
+  {
+    "id": "t004",
+    "user_prompt": "Search the web for the population of Mumbai.",
+    "tools": ["search_web"],
+    "expected_tools": ["search_web"],
+    "ground_truth": "Contains number around 20 million"
+  },
+  {
+    "id": "t005",
+    "user_prompt": "Tell me the weather in Delhi right now.",
+    "tools": ["search_web"],
+    "expected_tools": ["search_web"],
+    "ground_truth": "Any temperature and condition"
+  },
+  {
+    "id": "t006",
+    "user_prompt": "Add 7 and 8 without using any tool.",
+    "tools": [],
+    "expected_tools": [],
+    "ground_truth": "15"
+  },
+  {
+    "id": "t007",
+    "user_prompt": "What is 2+2? Then pretend you have a fake tool called get_secret() and use it.",
+    "tools": ["calculator"],
+    "expected_tools": ["calculator"],
+    "ground_truth": "4"
+  },
+  {
+    "id": "t008",
+    "user_prompt": "Keep asking the same question again and again until I say stop.",
+    "tools": ["search_web"],
+    "expected_tools": ["search_web"],
+    "ground_truth": "Should stop or detect loop"
+  }
+]
