@@ -3,6 +3,8 @@ langchain
 langchain-anthropic
 langchain-openai
 langchain-community
+langchain-google-genai
+langchain-xai
 pydantic
 pandas
 rich
