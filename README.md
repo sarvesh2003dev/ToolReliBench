@@ -1,44 +1,36 @@
 # ToolReliBench
 
-Tool-Use Benchmark + Reliability Wrapper for LLM Agents
+A practical benchmark and reliability wrapper for evaluating tool-using LLM agents.
 
-Built to solve real problems that OpenAI, Anthropic and DeepMind care about:  
-- Detect hallucinated tool calls  
-- Measure agent autonomy  
-- Prevent cost explosions and loops  
-- Structured failure analysis  
+> For the extended research implementation, long-horizon metrics, synthetic traces, and reproducibility materials, see [ToolReliBench1](https://github.com/sarvesh2003dev/ToolReliBench1).
 
-## Why this matters
-AI companies want agents that are reliable with tools.  
-This project shows I can build, test and document exactly that.
+## What it measures
 
-## Features
-- 20+ realistic tasks  
-- 6 clear metrics (correct tool, parameters, success rate, hallucination detection, recovery, cost)  
-- Failure taxonomy with 8 types  
-- Simple reliability wrapper (easy to add to any agent)  
-- All results saved as CSV  
+- Tool-selection accuracy and parameter correctness
+- Hallucinated tool calls and silent verification claims
+- Recovery after tool errors
+- Context drift, loops, and cost growth
+- Structured failure categories for debugging agent behavior
 
-## Failure Taxonomy
-| Category       | Failure Mode               | Example                              |
-|----------------|----------------------------|--------------------------------------|
-| Tool Selection | Hallucinated Tool          | Calls tool that does not exist       |
-| Tool Selection | Wrong Tool                 | Uses calculator for date             |
-| Parameter      | Invalid Params             | Missing required field               |
-| Execution      | Tool Error (no recovery)   | API fails and stops                  |
-| Execution      | Tool Error (recovered)     | Retries and succeeds                 |
-| Planning       | Infinite Loop / Drift      | Keeps calling same tool              |
-| Verification   | Wrong Final Answer         | Tool works but answer is wrong       |
-| Resource       | Cost Explosion             | Uses too many tokens                 |
+## Quick start
 
-## How to run (very easy)
-1. Clone or download the repo  
-2. pip install -r requirements.txt  
-3. Add your API keys  
-4. python run_benchmark.py  
+```bash
+git clone https://github.com/sarvesh2003dev/ToolReliBench.git
+cd ToolReliBench
+pip install -r requirements.txt
+python run_benchmark.py
+```
+
+Results are written to CSV so experiments can be compared across models and architectures.
+
+## Why it matters
+
+Reliable tool use is a core requirement for production agents. ToolReliBench makes failure modes visible, measurable, and easier to reproduce.
 
 ## Author
-Sarvesh (sarvesh2003dev)  
-Open source project for AI agent research 2026
 
-Star ⭐ if you like reliable agents!
+Sarvesh Tamshe — [@sarvesh2003dev](https://github.com/sarvesh2003dev)
+
+## License
+
+MIT
